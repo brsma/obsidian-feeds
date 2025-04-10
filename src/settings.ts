@@ -3,7 +3,8 @@ import ObsidianFeedsPlugin from "~/main";
 
 export interface ObsidianFeedsSettings {
   searchFor: string;
-  onlyWithTasks: boolean; // TODO: Add support for "all" | "done" | "undone";
+  onlyWithTasks: boolean; // TODO: Add support for "all" | "done" | "not done";
+  hideCompletedTasks: boolean;
   excludeFolders: string[];
   includeFolders: string[];
   oneliners: boolean;
@@ -23,6 +24,7 @@ export interface ObsidianFeedsSettings {
 export const DEFAULT_SETTINGS: ObsidianFeedsSettings = {
   searchFor: "[[#]]",
   onlyWithTasks: false,
+  hideCompletedTasks: false,
   excludeFolders: [],
   includeFolders: [],
   oneliners: true,
@@ -75,6 +77,19 @@ export class ObsidianFeedsSettingsTab extends PluginSettingTab {
             onlyWithTasks: value,
           });
         }),
+      );
+
+    new Setting(containerEl)
+      .setName("Hide completed tasks")
+      .setDesc("Don't show checked/completed tasks in the feed")
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.hideCompletedTasks)
+          .onChange(async value => {
+            await this.plugin.updateSettings({
+              hideCompletedTasks: value,
+            });
+          }),
       );
 
     new Setting(containerEl)

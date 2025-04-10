@@ -81,6 +81,11 @@ export default class FeedRenderer extends RefreshableRenderer {
     };
 
     const showTask = (listItem: ListItem) => {
+      // First check if we should hide completed tasks
+      if (settings.hideCompletedTasks && listItem.task && listItem.checked) {
+        return false;
+      }
+
       switch (settings.onlyWithTasks) {
         // case "all":
         case true:
