@@ -2,100 +2,88 @@ import eslint from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import reactHooks from 'eslint-plugin-react-hooks';
+import importPlugin from 'eslint-plugin-import';
+import tseslint from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Use FlatCompat to handle plugins and configurations from older versions
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: eslint.configs.recommended
 });
 
 export default [
-  { ignores: ["node_modules/**", "dist/**", "build/**", ".git/**"] },
-  ...compat.config({
-    root: true,
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      project: ["tsconfig.json"],
-      tsconfigRootDir: __dirname,
-    },
-    extends: [
-      "plugin:react-hooks/recommended",
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/typescript",
-    ],
-    env: {
-      browser: true,
-      node: true,
-      es2020: true,
-    },
-    plugins: ["@typescript-eslint"],
-    settings: {
-      "import/parsers": {
-        "@typescript-eslint/parser": [".ts", ".tsx"],
+  // Ignore patterns
+  { ignores: ['node_modules/**', 'dist/**', 'build/**', '.git/**', '**/*.js'] },
+  
+  // Base ESLint recommended rules
+  eslint.configs.recommended,
+  
+  // TypeScript rules from typescript-eslint
+  ...tseslint.configs.recommended,
+  
+  // Configure plugins
+  {
+    plugins: {
+      'react-hooks': reactHooks,
+      'import': importPlugin,
+    }
+  },
+  
+  // TypeScript-specific settings (applies to TS files only)
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        ecmaVersion: 'latest',
+        sourceType: 'module',
       },
     },
     rules: {
-      "no-unused-vars": "off",
-      "max-len": [
-        "error",
-        120,
-        2,
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { args: 'none', ignoreRestSiblings: true },
+      ],
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-this-alias': [
+        'error',
         {
+          allowedNames: ['self', 'plugin'],
+        },
+      ],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+    }
+  },
+  
+  // General rules for all files
+  {
+    rules: {
+      'max-len': [
+        'error',
+        {
+          code: 120,
+          tabWidth: 2,
           ignoreUrls: true,
           ignoreComments: true,
           ignoreRegExpLiterals: true,
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
-        },
+        }
       ],
-      "react/jsx-filename-extension": "off",
-      "import/no-extraneous-dependencies": "off",
-      "import/no-unresolved": "off",
-      "linebreak-style": ["error", "unix"],
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { args: "none", ignoreRestSiblings: true },
-      ],
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/ban-types": [
-        "error",
-        {
-          types: {
-            Function: false,
-          },
-          extendDefaults: true,
-        },
-      ],
-      "comma-dangle": ["error", "only-multiline"],
-      "arrow-parens": ["error", "as-needed"],
-      "no-empty": ["error", { allowEmptyCatch: true }],
-      "@typescript-eslint/no-this-alias": [
-        "error",
-        {
-          allowedNames: ["self", "plugin"],
-        },
-      ],
-      "no-prototype-builtins": "off",
-      "function-paren-newline": "off",
-      "@typescript-eslint/no-empty-function": "off",
-      "react-hooks/exhaustive-deps": "error",
-    },
-    overrides: [
-      {
-        files: ["*.ts"],
-        rules: {
-          "no-undef": "off",
-          "no-extra-parens": "off",
-          "@typescript-eslint/no-extra-parens": "off",
-        },
-      },
-    ]
-  })
+      'comma-dangle': ['error', 'only-multiline'],
+      'arrow-parens': ['error', 'as-needed'],
+      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-prototype-builtins': 'off',
+      'linebreak-style': ['error', 'unix'],
+    }
+  }
 ];
