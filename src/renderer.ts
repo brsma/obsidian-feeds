@@ -33,7 +33,9 @@ export default class FeedRenderer extends RefreshableRenderer {
     const isMatch = (l: Literal) =>
       l.section.subpath?.toLowerCase() === this.file.basename.toLowerCase() ||
       l.outlinks?.some((o: Literal) =>
-        searchForLinks.map(sfl => sfl.toLowerCase()).includes(`[[${o.fileName()?.toLowerCase()}]]`),
+        searchForLinks
+          .map(sfl => sfl.toLowerCase())
+          .includes(`[[${o.fileName()?.toLowerCase()}]]`),
       ) ||
       l.tags?.some((t: Literal) => searchForTags.some(tt => t.includes(tt)));
 
