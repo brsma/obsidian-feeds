@@ -15,8 +15,8 @@ jobs:
             - name: Build
               id: build
               run: |
-                  npm install
-                  npm run lint
+                  pnpm install
+                  pnpm run lint
     format:
         runs-on: ubuntu-latest
         name: Format
@@ -29,8 +29,8 @@ jobs:
             - name: Build
               id: build
               run: |
-                  npm install
-                  npm run check-format
+                  pnpm install
+                  pnpm run check-format
     build:
         runs-on: ubuntu-latest
         name: Build
@@ -43,5 +43,5 @@ jobs:
             - name: Build
               id: build
               run: |
-                  npm install
-                  npm run build
+                  pnpm install
+                  pnpm run build
