@@ -18,8 +18,8 @@ jobs:
       - name: Build
         id: build
         run: |
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
       # Create the release on github
       - name: Release
         uses: softprops/action-gh-release@v1
